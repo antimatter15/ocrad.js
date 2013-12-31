@@ -183,6 +183,22 @@ int OCRAD_scale( OCRAD_Descriptor * const ocrdes, const int value )
   return retval;
   }
 
+int OCRAD_set_exportfile( OCRAD_Descriptor * const ocrdes, const char * const filename)
+  {
+  if( !verify_descriptor( ocrdes ) ) return -1;
+  
+  FILE * exportfile = 0;
+  if( filename && filename[0] )
+    {
+    if( std::strcmp( filename, "-" ) == 0 ) exportfile = stdout;
+    else exportfile = std::fopen( filename, "w" );
+    }
+  if( !exportfile ) { ocrdes->ocr_errno = OCRAD_bad_argument; return -1; }
+
+  ocrdes->control.exportfile = exportfile;
+  return 0;
+  }
+
 
 int OCRAD_recognize( OCRAD_Descriptor * const ocrdes, const bool layout )
   {
@@ -194,6 +210,9 @@ int OCRAD_recognize( OCRAD_Descriptor * const ocrdes, const bool layout )
     { ocrdes->ocr_errno = OCRAD_mem_error; return -1; }
   if( ocrdes->textpage ) delete ocrdes->textpage;
   ocrdes->textpage = textpage;
+
+  if( ocrdes->control.exportfile ) textpage->xprint( ocrdes->control );
+
   return 0;
   }
 

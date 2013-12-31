@@ -75,6 +75,9 @@ int OCRAD_set_image_from_file( struct OCRAD_Descriptor * const ocrdes,
                                const char * const filename,
                                const bool invert );
 
+int OCRAD_set_exportfile( struct OCRAD_Descriptor * const ocrdes,
+                               const char * const filename);
+
 int OCRAD_set_utf8_format( struct OCRAD_Descriptor * const ocrdes,
                            const bool utf8 );		// 0 = byte, 1 = utf8
 

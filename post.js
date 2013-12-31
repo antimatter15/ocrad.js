@@ -55,6 +55,7 @@ OCRAD.close = Module.cwrap('OCRAD_close', 'number', ['number']);
 OCRAD.get_errno = Module.cwrap('OCRAD_get_errno', 'number', ['number']);
 OCRAD.set_image = Module.cwrap('OCRAD_set_image', 'number', ['number', 'number', 'number']);
 OCRAD.set_image_from_file = Module.cwrap('OCRAD_set_image_from_file', 'number', ['number', 'string', 'number']);
+OCRAD.set_exportfile = Module.cwrap('OCRAD_set_exportfile', 'number', ['number', 'string']);
 OCRAD.set_utf8_format = Module.cwrap('OCRAD_set_utf8_format', 'number', ['number', 'number']);
 OCRAD.set_threshold = Module.cwrap('OCRAD_set_threshold', 'number', ['number', 'number']);
 OCRAD.scale = Module.cwrap('OCRAD_scale', 'number', ['number', 'number']);
