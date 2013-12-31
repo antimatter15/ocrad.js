@@ -19,15 +19,59 @@ var api = { // low level api
 }
 
 
-
-return {
-	api: api,
-	version: function(){ return api.version() },
-	ocr: function(){
-		var desc = api.open()
-
-		api.close(desc)
+var OCRAD = function(image){
+	if(image.getContext) image = image.getContext('2d');
+	if(image.getImageData) image = image.getImageData(0, 0, image.canvas.width, image.canvas.height);
+	// if(image.data){
+	var width = image.width, height = image.height;
+	var header = "P5\n" + width + " " + height + "\n255\n";
+	var dst = new Uint8Array(header.length + width * height);
+	var src = image.data;
+	var srcLength = src.length | 0, srcLength_16 = (srcLength - 16) | 0;
+	var j = header.length;
+	for(var i = 0; i < j; i++){
+		dst[i] = header.charCodeAt(i) // write the header
 	}
+	var coeff_r = 4899, coeff_g = 9617, coeff_b = 1868;
+
+	for (var i = 0; i <= srcLength_16; i += 16, j += 4) {
+		dst[j]     = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
+		dst[j + 1] = (src[i+4] * coeff_r + src[i+5] * coeff_g + src[i+6] * coeff_b + 8192) >> 14;
+		dst[j + 2] = (src[i+8] * coeff_r + src[i+9] * coeff_g + src[i+10] * coeff_b + 8192) >> 14;
+		dst[j + 3] = (src[i+12] * coeff_r + src[i+13] * coeff_g + src[i+14] * coeff_b + 8192) >> 14;
+	}
+	for (; i < srcLength; i += 4, ++j) {
+		dst[j] = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
+	}
+
+	FS.writeFile('/in.pnm', dst, {encoding: 'binary'});
+
+	var desc = api.open();
+	api.set_image_from_file(desc, 'in.pnm', 0);
+	
+	api.set_utf8_format(desc, 1);
+
+	api.recognize(desc, 0)
+
+	var text = '';
+
+	var block_count = api.result_blocks(desc);
+	
+	for(var i = 0; i < block_count; i++){
+		var line_count = api.result_lines(desc, i);
+		for(var j = 0; j < line_count; j++){
+			var line = api.result_line(desc, i, j);
+			// lines.push(line)
+			text += line;
+		}
+	}
+	api.close(desc)
+
+	return text;
 }
+
+OCRAD.version = api.version;
+
+return OCRAD;
 
 })();
