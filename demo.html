@@ -1,11 +1,11 @@
 <!doctype html>
 <html>
 	<head>
-		<title>GOCR.js</title>
+		<title>Ocrad.js - Optical Character Recognition in Javascript</title>
 		<style>
 			body {
 				font-family: sans-serif;
-				background: #EEE;
+				background: #DEF0DC;
 			}
 			#main {
 				margin-right: auto;
@@ -14,7 +14,6 @@
 				width: 600px;
 			}
 			h1 {
-				padding-left: 50px;
 				font-size: 400%;
 				margin-top: 30px;
 
@@ -81,9 +80,9 @@
 	<body>
 		<div id="main">
 			
-			<h1>OCRAD.js&nbsp;<div style="font-size: small; font-weight: normal; display: inline">Optical Character Recognition in JS</div></h1>
+			<h1>Ocrad.js&nbsp;<div style="font-size: small; font-weight: normal; display: inline">Optical Character Recognition in JS</div></h1>
 			<div class="content">
-				<strong>OCRAD.js</strong> is a <strong>pure-javascript</strong> version of the <a href="http://www.gnu.org/software/ocrad/">OCRAD</a> project, automatically converted using <a href="https://github.com/kripken/emscripten">Emscripten</a>. It is a simple <a href="http://en.wikipedia.org/wiki/Optical_character_recognition">OCR (Optical Character Recognition)</a> program that can convert scanned images of text back into text. Clocking in at <strong>about a megabyte</strong> of Javascript with no hefty training data dependencies (looking at you, <a href="https://code.google.com/p/tesseract-ocr/">Tesseract</a>), it's on the lighter end of the spectrum.
+				<strong>Ocrad.js</strong> is a <strong>pure-javascript</strong> version of the <a href="http://www.gnu.org/software/ocrad/">Ocrad</a> project, automatically converted using <a href="https://github.com/kripken/emscripten">Emscripten</a>. It is a simple <a href="http://en.wikipedia.org/wiki/Optical_character_recognition">OCR (Optical Character Recognition)</a> program that can convert scanned images of text back into text. Clocking in at <strong>about a megabyte</strong> of Javascript with no hefty training data dependencies (looking at you, <a href="https://code.google.com/p/tesseract-ocr/">Tesseract</a>), it's on the lighter end of the spectrum.
 			</div>
 			
 			<div class="content inverse">
@@ -107,7 +106,7 @@
 
 
 			<div class="content">
-				The <strong>OCRAD.js API</strong> is really simple. First you need to include <tt>gocr.js</tt> which is about 1MB in size.
+				The <strong>Ocrad.js API</strong> is really simple. First you need to include <tt>gocr.js</tt> which is about 1MB in size.
 				<div style="padding: 20px; font-family: monospace">
 					&lt;script src="ocrad.js"&gt;&lt;/script&gt;
 				</div>
@@ -119,16 +118,52 @@
 				The <tt>image</tt> argument can be a canvas element, a Context2D instance, or an instance of ImageData.
 			</div>
 
+			<div class="content">
+				Ocrad.js also <strong>exposes all</strong> of the <a href="http://www.gnu.org/software/ocrad/manual/ocrad_manual.html#Library-functions">C library functions</a> in addition to the extremely simple high level API covered in the last section. By calling <tt>OCRAD.version()</tt> you can find the current version string: <tt>0.23-pre1</tt>, the latest pre-release version of the software available. 
+
+				<div style="padding: 20px; font-family: monospace">
+					<i>string</i> OCRAD.version()<br>
+					<i>void</i> OCRAD.write_file(<i>string</i> filename, <i>Uint8Array</i> PBM Image Data)<br>
+					<i>pointer</i> OCRAD.open()<br>
+					<i>int</i> OCRAD.close(<i>pointer</i> descriptor)<br>
+					(and a few more!)
+					<!-- OCRAD.get_errno<br>
+					OCRAD.set_image<br>
+					OCRAD.set_image_from_file<br>
+					OCRAD.set_utf8_format<br>
+					OCRAD.set_threshold<br>
+					OCRAD.scale<br>
+					OCRAD.recognize<br>
+					OCRAD.result_blocks<br>
+					OCRAD.result_lines<br>
+					OCRAD.result_chars_total<br>
+					OCRAD.result_chars_block<br>
+					OCRAD.result_chars_line<br>
+					OCRAD.result_line<br>
+					OCRAD.result_first_character<br> -->
+				</div>
+
+				
+
+				Unlike GOCR.js, Ocrad.js is designed as port of the library, rather than a port of an executable. This means that processing subsequent images doesn't involve reinitializing an executable, so processing an image can be done in as little as a fifth of the time it takes GOCR.js to do the same (The fact that Ocrad is naturally faster than GOCR doesn't hurt this statistic either). 
+
+			</div>
+
+			<div class="content">
+				<strong>What about <a href="http://antimatter15.github.io/gocr.js/demo.html">GOCR.js</a>?</strong>
+				There have been some other comparisons on the performance of OCRAD versus GOCR. In this <a href="http://www.mathstat.dal.ca/~selinger/ocr-test/">comparison done by Peter Selinger</a>, OCRAD 
+				time 66 419 0
+				accuracy 175 184 126 
+			</div>
+
 
 			<div class="content">
 				What <em>consistently</em> amazes me about OCR isn't its astonishing quality or lack thereof. Rather, it's how <em>utterly</em> unpredictable the results can be. Sometimes there'll be some barely legible block of text that comes through absolutely pristine, and some other time there will be a perfectly clean input which outputs complete garbage. 
 			</div>
 
 			<div class="content">
-				Aside from the relentless pursuit of <a href="http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html">Atwood's law</a>, there are legitimate applications which might benefit from <strong>client side OCR</strong> (I'd like to think that I'm currently working on one, and no, it's not solving the <a href="http://en.wikipedia.org/wiki/CAPTCHA">wavy squiggly letters</a> blockading your attempts at building a spam empire). Arguably, it'd be best to go for porting the best possible open source OCR engine in existence (looking at you, <a href="https://code.google.com/p/tesseract-ocr/">Tesseract</a>). Unlike OCRAD and GOCR, which interestingly seem to be <strong>powered by painstakingly written rules for each recognizable glyph</strong>, Tesseract uses neural networks and the ilk to learn features common to different letters (which means it's extensible and multilingual). When you include the training data, <strong>Tesseract is actually kind of massive</strong> &mdash; A functional Emscripten port would probably be at least 30 times the size of OCRAD.js! 
+				Aside from the relentless march of <a href="http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html">Atwood's law</a>, there are legitimate applications which might benefit from <strong>client side OCR</strong> (I'd like to think that I'm currently working on one, and no, it's not solving the <a href="http://en.wikipedia.org/wiki/CAPTCHA">wavy squiggly letters</a> blockading your attempts at building a spam empire). Arguably, it'd be best to go for porting the best possible open source OCR engine in existence (looking at you, <a href="https://code.google.com/p/tesseract-ocr/">Tesseract</a>). Unlike OCRAD and GOCR, which interestingly seem to be <strong>powered by painstakingly written rules for each recognizable glyph</strong>, Tesseract uses neural networks and the ilk to learn features common to different letters (which means it's extensible and multilingual). When you include the training data, <strong>Tesseract is actually kind of massive</strong> &mdash; A functional Emscripten port would probably be at least 30 times the size of OCRAD.js! 
 			</div>
-
-
 
 			<div class='footer'>Hi. This was made by <a href="http://antimatter15.com">me</a>. I am a tiny footer, please don't <a href="javascript:void(document.body.className+='squish')">squish</a> me.
 			</div>
@@ -181,22 +216,26 @@
 			}
 			
 			var lastWorker;
-
+			var worker = new Worker('worker.js')
 			function runOCR(){
-				if(lastWorker) lastWorker.terminate();
-
-				var worker = new Worker('worker.js')
+				
 				worker.onmessage = function(e){
-					document.getElementById("text").innerText = e.data
-					document.getElementById('timing').innerText = 'recognition took ' + ((Date.now() - start)/1000).toFixed(2) + 's';
-					worker.terminate();
+					if('innerText' in document.getElementById("text")){
+						document.getElementById("text").innerText = e.data
+					}else{
+						document.getElementById("text").textContent = e.data	
+					}
+					
+					document.getElementById('timing').innerHTML = 'recognition took ' + ((Date.now() - start)/1000).toFixed(2) + 's';
+					// worker.terminate();
 				}
 				var start = Date.now()
 				var image_data = o.getImageData(0, 0, c.width, c.height)
-				worker.postMessage(image_data, [image_data.data.buffer])
+				worker.postMessage(image_data)
 				lastWorker = worker;
-				//  GOCR(c)
 			}
+
+
 
 			reset_canvas()
 
@@ -259,7 +298,6 @@
 					var j = Math.floor(Math.random() * (i + 1));
 					var temp = a[i]; a[i] = a[j]; a[j] = temp;
 				}
-				return a;
 			}
 
 			fisher_yates(fonts);
@@ -292,14 +330,13 @@
 								n += 50
 							}
 						}
-						runOCR();
+						runOCR(phrase);
 					}
 				})
-				
 			}
 
 			o.font = '30px sans-serif'
-			o.fillText("Welcome to the OCRAD.js Demo!", 50, 100);
+			o.fillText("Welcome to the Ocrad.js Demo!", 50, 100);
 			runOCR();
 		</script>
 	</body>
