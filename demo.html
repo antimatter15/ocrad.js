@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>Ocrad.js - Optical Character Recognition in Javascript</title>
+		<meta charset="utf8">
 		<style>
 			body {
 				font-family: sans-serif;
@@ -195,13 +196,11 @@
 				<p>
 				With a simple script which generates some text in some random font selected from the Google Font API, I ran a few hundred trials comparing the recognized text with the original text. The metric was a modified Levenshtein distance where the substitution cost for capitalization errors is <tt>0.1</tt>. Of <tt>485</tt> trials, <tt>175</tt> trials ended up favoring GOCR.js, <tt>184</tt> favoring Ocrad.js, and <tt>126</tt> resulted in a tie. From playing with the draw tool, it seems that <strong>Ocrad is much more predictable and forgiving</strong> for minor alignment and orientation errors.
 				<p>
-				There have been some other comparisons on the performance of OCRAD versus GOCR. In this <a href="http://www.mathstat.dal.ca/~selinger/ocr-test/">comparison done by Peter Selinger</a>, Ocrad comes out just behind Tesseract. 
+				There have been some other comparisons on the performance of OCRAD versus GOCR. In this <a href="http://www.mathstat.dal.ca/~selinger/ocr-test/">comparison done by Peter Selinger</a>, Ocrad comes out just behind Tesseract. Another <a href="http://www.splitbrain.org/blog/2010-06/15-linux_ocr_software_comparison">comparison by Andreas Gohr</a> has GOCR performing better than Ocrad. 
+				<p>
+				Accuracy wise, they're actually pretty close. It might be possible to create something which meshes together the outputs of both, picking whichever output matches a certain heuristic for quality. Ocrad does seem to vastly outperform GOCR when it comes to letter sketches on a canvas, so that's the one I'm focusing on here.
 			</div>
 
-
-			<div class="content">
-				What <em>consistently</em> amazes me about OCR isn't its astonishing quality or lack thereof. Rather, it's how <em>utterly</em> unpredictable the results can be. Sometimes there'll be some barely legible block of text that comes through absolutely pristine, and some other time there will be a perfectly clean input which outputs complete garbage. 
-			</div>
 
 			<div class="content">
 				Aside from the relentless march of <a href="http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html">Atwood's law</a>, there are legitimate applications which might benefit from <strong>client side OCR</strong> (I'd like to think that I'm currently working on one, and no, it's not solving the <a href="http://en.wikipedia.org/wiki/CAPTCHA">wavy squiggly letters</a> blockading your attempts at building a spam empire). Arguably, it'd be best to go for porting the best possible open source OCR engine in existence (looking at you, <a href="https://code.google.com/p/tesseract-ocr/">Tesseract</a>). Unlike OCRAD and GOCR, which interestingly seem to be <strong>powered by painstakingly written rules for each recognizable glyph</strong>, Tesseract uses neural networks and the ilk to learn features common to different letters (which means it's extensible and multilingual). When you include the training data, <strong>Tesseract is actually kind of massive</strong> &mdash; A functional Emscripten port would probably be at least 30 times the size of OCRAD.js! 
@@ -386,7 +385,6 @@
 				"Do not go gentle into that good night",
 				"To be, or not to be: That is the question. Whether tis nobler in the mind to suffer the slings and arrows of outrageous fortune.",
 				"You're not crazy!",
-				"Harry Potter should ride a Roomba.",
 				"Time flies like an arrow, Fruit flies like a banana.",
 				"This message is bludgeoning the deceased equine.",
 				"Rawr! I'm a dinosaur!",
