@@ -19,9 +19,12 @@
 				image.onload = function(){ callback(OCRImage(image)) }
 			}
 
-			OCRPath("message.png", function(words){
-				alert(words)
-			})
+			function OCRFile(file, callback){
+				var reader = new FileReader();
+				reader.onload = function(){ OCRPath(reader.result, callback); }
+				reader.readAsDataURL(file)
+			}
 		</script>
+		<input type="file" onchange="OCRFile(this.files[0], function(text){alert(text)})">
 	</body>	
 </html>
