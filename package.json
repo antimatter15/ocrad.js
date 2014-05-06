@@ -1,0 +1,21 @@
+{
+  "name": "ocrad.js",
+  "version": "0.0.1",
+  "description": "OCR in JavaScript",
+  "keywords": ["ocr"],
+  "homepage": "https://github.com/antimatter15/ocrad.js",
+  "bugs": {
+    "url": "https://github.com/antimatter15/ocrad.js/issues",
+    "email": "antimatter15@gmail.com"
+  },
+  "license": "GPL-3.0",
+  "author": {
+    "name": "Kevin Kwok",
+    "email": "antimatter15@gmail.com"
+  },
+  "main": "ocrad",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com:antimatter15/ocrad.js.git"
+  }
+}
