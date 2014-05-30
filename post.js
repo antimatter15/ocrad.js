@@ -1,4 +1,4 @@
-var OCRAD = function(image){
+var OCRAD = function(image, invert, raw){
 	if(image.getContext) image = image.getContext('2d');
 	if(image.getImageData) image = image.getImageData(0, 0, image.canvas.width, image.canvas.height);
 	if(image.data){
@@ -29,7 +29,11 @@ var OCRAD = function(image){
 	OCRAD.write_file('/in.pnm', image);
 
 	var desc = OCRAD.open();
-	OCRAD.set_image_from_file(desc, 'in.pnm', 0);
+	OCRAD.set_image_from_file(desc, 'in.pnm', invert ? 1 : 0);
+	if(raw){
+		OCRAD.set_exportfile(desc, '-');
+		Module.print = raw;
+	}
 	OCRAD.set_utf8_format(desc, 1);
 	OCRAD.recognize(desc, 0)
 
