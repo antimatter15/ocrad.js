@@ -1,5 +1,5 @@
 var OCRAD = (function(){
-
+  
 // Note: For maximum-speed code, see "Optimizing Code" on the Emscripten wiki, https://github.com/kripken/emscripten/wiki/Optimizing-Code
 // Note: Some Emscripten settings may limit the speed of the generated code.
 // The Module object: Our interface to the outside world. We import
@@ -17,8 +17,8 @@ var OCRAD = (function(){
 // after the generated code, you will need to define   var Module = {};
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
-var Module;
-if (!Module) Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+var Module = {};
+// if (!Module) Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
 // Sometimes an existing Module object exists with properties
 // meant to overwrite the default module functionality. Here
 // we collect those properties and reapply _after_ we configure
@@ -2008,7 +2008,7 @@ function copyTempDouble(ptr) {
         try {
           stat = fs.lstatSync(path);
           if (NODEFS.isWindows) {
-            // On Windows, directories return permission bits 'rw-rw-rw-', even though they have 'rwxrwxrwx', so
+            // On Windows, directories return permission bits 'rw-rw-rw-', even though they have 'rwxrwxrwx', so 
             // propagate write bits to execute bits.
             stat.mode = stat.mode | ((stat.mode & 146) >> 1);
           }
@@ -5108,7 +5108,7 @@ function copyTempDouble(ptr) {
             formatIndex += match[0].length;
             continue;
           }
-        }
+        }      
         // remove whitespace
         while (1) {
           next = get();
@@ -5381,7 +5381,7 @@ function copyTempDouble(ptr) {
             newDate.setFullYear(newDate.getFullYear()+1);
           }
         } else {
-          // we stay in current month
+          // we stay in current month 
           newDate.setDate(newDate.getDate()+days);
           return newDate;
         }
@@ -5472,7 +5472,7 @@ function copyTempDouble(ptr) {
             } else {
               return thisDate.getFullYear();
             }
-          } else {
+          } else { 
             return thisDate.getFullYear()-1;
           }
       };
@@ -5500,14 +5500,14 @@ function copyTempDouble(ptr) {
           return leadingSomething(date.tm_mday, 2, ' ');
         },
         '%g': function(date) {
-          // %g, %G, and %V give values according to the ISO 8601:2000 standard week-based year.
-          // In this system, weeks begin on a Monday and week 1 of the year is the week that includes
-          // January 4th, which is also the week that includes the first Thursday of the year, and
-          // is also the first week that contains at least four days in the year.
-          // If the first Monday of January is the 2nd, 3rd, or 4th, the preceding days are part of
-          // the last week of the preceding year; thus, for Saturday 2nd January 1999,
-          // %G is replaced by 1998 and %V is replaced by 53. If December 29th, 30th,
-          // or 31st is a Monday, it and any following days are part of week 1 of the following year.
+          // %g, %G, and %V give values according to the ISO 8601:2000 standard week-based year. 
+          // In this system, weeks begin on a Monday and week 1 of the year is the week that includes 
+          // January 4th, which is also the week that includes the first Thursday of the year, and 
+          // is also the first week that contains at least four days in the year. 
+          // If the first Monday of January is the 2nd, 3rd, or 4th, the preceding days are part of 
+          // the last week of the preceding year; thus, for Saturday 2nd January 1999, 
+          // %G is replaced by 1998 and %V is replaced by 53. If December 29th, 30th, 
+          // or 31st is a Monday, it and any following days are part of week 1 of the following year. 
           // Thus, for Tuesday 30th December 1997, %G is replaced by 1998 and %V is replaced by 01.
           return getWeekBasedYear(date).toString().substring(2);
         },
@@ -5551,8 +5551,8 @@ function copyTempDouble(ptr) {
           return day.getDay() || 7;
         },
         '%U': function(date) {
-          // Replaced by the week number of the year as a decimal number [00,53].
-          // The first Sunday of January is the first day of week 1;
+          // Replaced by the week number of the year as a decimal number [00,53]. 
+          // The first Sunday of January is the first day of week 1; 
           // days in the new year before this are in week 0. [ tm_year, tm_wday, tm_yday]
           var janFirst = new Date(date.tm_year+1900, 0, 1);
           var firstSunday = janFirst.getDay() === 0 ? janFirst : __addDays(janFirst, 7-janFirst.getDay());
@@ -5568,10 +5568,10 @@ function copyTempDouble(ptr) {
           return compareByDay(firstSunday, janFirst) === 0 ? '01': '00';
         },
         '%V': function(date) {
-          // Replaced by the week number of the year (Monday as the first day of the week)
-          // as a decimal number [01,53]. If the week containing 1 January has four
-          // or more days in the new year, then it is considered week 1.
-          // Otherwise, it is the last week of the previous year, and the next week is week 1.
+          // Replaced by the week number of the year (Monday as the first day of the week) 
+          // as a decimal number [01,53]. If the week containing 1 January has four 
+          // or more days in the new year, then it is considered week 1. 
+          // Otherwise, it is the last week of the previous year, and the next week is week 1. 
           // Both January 4th and the first Thursday of January are always in week 1. [ tm_year, tm_wday, tm_yday]
           var janFourthThisYear = new Date(date.tm_year+1900, 0, 4);
           var janFourthNextYear = new Date(date.tm_year+1901, 0, 4);
@@ -5581,7 +5581,7 @@ function copyTempDouble(ptr) {
           if (compareByDay(endDate, firstWeekStartThisYear) < 0) {
             // if given date is before this years first week, then it belongs to the 53rd week of last year
             return '53';
-          }
+          } 
           if (compareByDay(firstWeekStartNextYear, endDate) <= 0) {
             // if given date is after next years first week, then it belongs to the 01th week of next year
             return '01';
@@ -5602,8 +5602,8 @@ function copyTempDouble(ptr) {
           return day.getDay();
         },
         '%W': function(date) {
-          // Replaced by the week number of the year as a decimal number [00,53].
-          // The first Monday of January is the first day of week 1;
+          // Replaced by the week number of the year as a decimal number [00,53]. 
+          // The first Monday of January is the first day of week 1; 
           // days in the new year before this are in week 0. [ tm_year, tm_wday, tm_yday]
           var janFirst = new Date(date.tm_year, 0, 1);
           var firstMonday = janFirst.getDay() === 1 ? janFirst : __addDays(janFirst, janFirst.getDay() === 0 ? 1 : 7-janFirst.getDay()+1);
@@ -5627,11 +5627,11 @@ function copyTempDouble(ptr) {
         },
         '%z': function(date) {
           // Replaced by the offset from UTC in the ISO 8601:2000 standard format ( +hhmm or -hhmm ),
-          // or by no characters if no timezone is determinable.
-          // For example, "-0430" means 4 hours 30 minutes behind UTC (west of Greenwich).
-          // If tm_isdst is zero, the standard time offset is used.
-          // If tm_isdst is greater than zero, the daylight savings time offset is used.
-          // If tm_isdst is negative, no characters are returned.
+          // or by no characters if no timezone is determinable. 
+          // For example, "-0430" means 4 hours 30 minutes behind UTC (west of Greenwich). 
+          // If tm_isdst is zero, the standard time offset is used. 
+          // If tm_isdst is greater than zero, the daylight savings time offset is used. 
+          // If tm_isdst is negative, no characters are returned. 
           // FIXME: we cannot determine time zone (or can we?)
           return '';
         },
@@ -5652,7 +5652,7 @@ function copyTempDouble(ptr) {
       var bytes = intArrayFromString(pattern, false);
       if (bytes.length > maxsize) {
         return 0;
-      }
+      } 
       writeArrayToMemory(bytes, s);
       return bytes.length-1;
     }var _strftime_l=_strftime;
@@ -6112,7 +6112,7 @@ function copyTempDouble(ptr) {
             // FIXME: ideally this should be clamped against the canvas size and zero
             Browser.mouseX += Browser.mouseMovementX;
             Browser.mouseY += Browser.mouseMovementY;
-          }
+          }        
         } else {
           // Otherwise, calculate the movement based on the changes
           // in the coordinates.
@@ -6186,7 +6186,7 @@ function copyTempDouble(ptr) {
         this.windowedHeight = canvas.height;
         canvas.width = screen.width;
         canvas.height = screen.height;
-        // check if SDL is available
+        // check if SDL is available   
         if (typeof SDL != "undefined") {
           var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
           flags = flags | 0x00800000; // set SDL_FULLSCREEN flag
@@ -6197,7 +6197,7 @@ function copyTempDouble(ptr) {
         var canvas = Module['canvas'];
         canvas.width = this.windowedWidth;
         canvas.height = this.windowedHeight;
-        // check if SDL is available
+        // check if SDL is available       
         if (typeof SDL != "undefined") {
           var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
           flags = flags & ~0x00800000; // clear SDL_FULLSCREEN flag
@@ -7126,9 +7126,9 @@ var i64Math = (function() { // Emscripten wrapper
    * The above copyright notice and this permission notice shall be
    * included in all copies or substantial portions of the Software.
    *
-   * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
-   * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
-   * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+   * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+   * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+   * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
    *
    * IN NO EVENT SHALL TOM WU BE LIABLE FOR ANY SPECIAL, INCIDENTAL,
    * INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER
@@ -7486,7 +7486,7 @@ var i64Math = (function() { // Emscripten wrapper
       r.subTo(t,r);
     }
     BigInteger.ONE.dlShiftTo(ys,t);
-    t.subTo(y,y);  // "negative" y so we can replace sub with am later
+    t.subTo(y,y); // "negative" y so we can replace sub with am later
     while(y.t < ys) y[y.t++] = 0;
     while(--j >= 0) {
       // Estimate quotient digit
@@ -7545,7 +7545,7 @@ var i64Math = (function() { // Emscripten wrapper
     var y = x&3;    // y == 1/x mod 2^2
     y = (y*(2-(x&0xf)*y))&0xf;  // y == 1/x mod 2^4
     y = (y*(2-(x&0xff)*y))&0xff;  // y == 1/x mod 2^8
-    y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff;  // y == 1/x mod 2^16
+    y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff; // y == 1/x mod 2^16
     // last step - calculate inverse mod DV directly;
     // assumes 16 < DB <= 32 and assumes ability to handle 48-bit ints
     y = (y*(2-x*y%this.DV))%this.DV;    // y == 1/x mod 2^dbits
@@ -8000,7 +8000,7 @@ if (Module['noInitialRun']) {
 run();
 // {{POST_RUN_ADDITIONS}}
 // {{MODULE_ADDITIONS}}
-var OCRAD = function(image){
+var OCRAD = function(image, invert, raw){
   if(image.getContext) image = image.getContext('2d');
   if(image.getImageData) image = image.getImageData(0, 0, image.canvas.width, image.canvas.height);
   if(image.data){
@@ -8014,6 +8014,7 @@ var OCRAD = function(image){
       dst[i] = header.charCodeAt(i) // write the header
     }
     var coeff_r = 4899, coeff_g = 9617, coeff_b = 1868;
+
     for (var i = 0; i <= srcLength_16; i += 16, j += 4) {
       dst[j]     = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
       dst[j + 1] = (src[i+4] * coeff_r + src[i+5] * coeff_g + src[i+6] * coeff_b + 8192) >> 14;
@@ -8026,14 +8027,21 @@ var OCRAD = function(image){
     image = dst;
   }
   if(image instanceof ArrayBuffer) image = new Uint8Array(image);
+
   OCRAD.write_file('/in.pnm', image);
+
   var desc = OCRAD.open();
-  OCRAD.set_image_from_file(desc, 'in.pnm', 0);
+  OCRAD.set_image_from_file(desc, 'in.pnm', invert ? 1 : 0);
+  if(raw){
+    OCRAD.set_exportfile(desc, '-');
+    Module.print = raw;
+  }
   OCRAD.set_utf8_format(desc, 1);
   OCRAD.recognize(desc, 0)
+
   var text = '';
   var block_count = OCRAD.result_blocks(desc);
-
+  
   for(var i = 0; i < block_count; i++){
     var line_count = OCRAD.result_lines(desc, i);
     for(var j = 0; j < line_count; j++){
@@ -8042,6 +8050,7 @@ var OCRAD = function(image){
     }
   }
   OCRAD.close(desc)
+
   return text;
 }
 OCRAD.write_file = function(filename, arr){
@@ -8071,3 +8080,4 @@ return OCRAD;
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = OCRAD;
 }
+
