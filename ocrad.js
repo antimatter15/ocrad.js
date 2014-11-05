@@ -1,5 +1,5 @@
 var OCRAD = (function(){
-	
+  
 // Note: For maximum-speed code, see "Optimizing Code" on the Emscripten wiki, https://github.com/kripken/emscripten/wiki/Optimizing-Code
 // Note: Some Emscripten settings may limit the speed of the generated code.
 // The Module object: Our interface to the outside world. We import
@@ -17,8 +17,8 @@ var OCRAD = (function(){
 // after the generated code, you will need to define   var Module = {};
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
-var Module;
-if (!Module) Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+var Module = {};
+// if (!Module) Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
 // Sometimes an existing Module object exists with properties
 // meant to overwrite the default module functionality. Here
 // we collect those properties and reapply _after_ we configure
@@ -6105,13 +6105,13 @@ function copyTempDouble(ptr) {
           }
           // check if SDL is available
           if (typeof SDL != "undefined") {
-          	Browser.mouseX = SDL.mouseX + Browser.mouseMovementX;
-          	Browser.mouseY = SDL.mouseY + Browser.mouseMovementY;
+            Browser.mouseX = SDL.mouseX + Browser.mouseMovementX;
+            Browser.mouseY = SDL.mouseY + Browser.mouseMovementY;
           } else {
-          	// just add the mouse delta to the current absolut mouse position
-          	// FIXME: ideally this should be clamped against the canvas size and zero
-          	Browser.mouseX += Browser.mouseMovementX;
-          	Browser.mouseY += Browser.mouseMovementY;
+            // just add the mouse delta to the current absolut mouse position
+            // FIXME: ideally this should be clamped against the canvas size and zero
+            Browser.mouseX += Browser.mouseMovementX;
+            Browser.mouseY += Browser.mouseMovementY;
           }        
         } else {
           // Otherwise, calculate the movement based on the changes
@@ -6188,9 +6188,9 @@ function copyTempDouble(ptr) {
         canvas.height = screen.height;
         // check if SDL is available   
         if (typeof SDL != "undefined") {
-        	var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
-        	flags = flags | 0x00800000; // set SDL_FULLSCREEN flag
-        	HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
+          var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
+          flags = flags | 0x00800000; // set SDL_FULLSCREEN flag
+          HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
         }
         Browser.updateResizeListeners();
       },setWindowedCanvasSize:function () {
@@ -6199,9 +6199,9 @@ function copyTempDouble(ptr) {
         canvas.height = this.windowedHeight;
         // check if SDL is available       
         if (typeof SDL != "undefined") {
-        	var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
-        	flags = flags & ~0x00800000; // clear SDL_FULLSCREEN flag
-        	HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
+          var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
+          flags = flags & ~0x00800000; // clear SDL_FULLSCREEN flag
+          HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
         }
         Browser.updateResizeListeners();
       }};
@@ -7471,7 +7471,7 @@ var i64Math = (function() { // Emscripten wrapper
     }
     if(r == null) r = nbi();
     var y = nbi(), ts = this.s, ms = m.s;
-    var nsh = this.DB-nbits(pm[pm.t-1]);	// normalize modulus
+    var nsh = this.DB-nbits(pm[pm.t-1]);  // normalize modulus
     if(nsh > 0) { pm.lShiftTo(nsh,y); pt.lShiftTo(nsh,r); }
     else { pm.copyTo(y); pt.copyTo(r); }
     var ys = y.t;
@@ -7486,12 +7486,12 @@ var i64Math = (function() { // Emscripten wrapper
       r.subTo(t,r);
     }
     BigInteger.ONE.dlShiftTo(ys,t);
-    t.subTo(y,y);	// "negative" y so we can replace sub with am later
+    t.subTo(y,y); // "negative" y so we can replace sub with am later
     while(y.t < ys) y[y.t++] = 0;
     while(--j >= 0) {
       // Estimate quotient digit
       var qd = (r[--i]==y0)?this.DM:Math.floor(r[i]*d1+(r[i-1]+e)*d2);
-      if((r[i]+=y.am(0,qd,r,j,0,ys)) < qd) {	// Try it out
+      if((r[i]+=y.am(0,qd,r,j,0,ys)) < qd) {  // Try it out
         y.dlShiftTo(j,t);
         r.subTo(t,r);
         while(r[i] < --qd) r.subTo(t,r);
@@ -7503,7 +7503,7 @@ var i64Math = (function() { // Emscripten wrapper
     }
     r.t = ys;
     r.clamp();
-    if(nsh > 0) r.rShiftTo(nsh,r);	// Denormalize remainder
+    if(nsh > 0) r.rShiftTo(nsh,r);  // Denormalize remainder
     if(ts < 0) BigInteger.ZERO.subTo(r,r);
   }
   // (public) this mod a
@@ -7542,13 +7542,13 @@ var i64Math = (function() { // Emscripten wrapper
     if(this.t < 1) return 0;
     var x = this[0];
     if((x&1) == 0) return 0;
-    var y = x&3;		// y == 1/x mod 2^2
-    y = (y*(2-(x&0xf)*y))&0xf;	// y == 1/x mod 2^4
-    y = (y*(2-(x&0xff)*y))&0xff;	// y == 1/x mod 2^8
-    y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff;	// y == 1/x mod 2^16
+    var y = x&3;    // y == 1/x mod 2^2
+    y = (y*(2-(x&0xf)*y))&0xf;  // y == 1/x mod 2^4
+    y = (y*(2-(x&0xff)*y))&0xff;  // y == 1/x mod 2^8
+    y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff; // y == 1/x mod 2^16
     // last step - calculate inverse mod DV directly;
     // assumes 16 < DB <= 32 and assumes ability to handle 48-bit ints
-    y = (y*(2-x*y%this.DV))%this.DV;		// y == 1/x mod 2^dbits
+    y = (y*(2-x*y%this.DV))%this.DV;    // y == 1/x mod 2^dbits
     // we really want the negative inverse, and -DV < y < DV
     return (y>0)?this.DV-y:-y;
   }
@@ -7578,7 +7578,7 @@ var i64Math = (function() { // Emscripten wrapper
   }
   // x = x/R mod m (HAC 14.32)
   function montReduce(x) {
-    while(x.t <= this.mt2)	// pad x so am has enough room later
+    while(x.t <= this.mt2)  // pad x so am has enough room later
       x[x.t++] = 0;
     for(var i = 0; i < this.m.t; ++i) {
       // faster way of calculating u0 = x[i]*mp mod DV
@@ -8000,52 +8000,61 @@ if (Module['noInitialRun']) {
 run();
 // {{POST_RUN_ADDITIONS}}
 // {{MODULE_ADDITIONS}}
-var OCRAD = function(image){
-	if(image.getContext) image = image.getContext('2d');
-	if(image.getImageData) image = image.getImageData(0, 0, image.canvas.width, image.canvas.height);
-	if(image.data){
-		var width = image.width, height = image.height;
-		var header = "P5\n" + width + " " + height + "\n255\n";
-		var dst = new Uint8Array(header.length + width * height);
-		var src = image.data;
-		var srcLength = src.length | 0, srcLength_16 = (srcLength - 16) | 0;
-		var j = header.length;
-		for(var i = 0; i < j; i++){
-			dst[i] = header.charCodeAt(i) // write the header
-		}
-		var coeff_r = 4899, coeff_g = 9617, coeff_b = 1868;
-		for (var i = 0; i <= srcLength_16; i += 16, j += 4) {
-			dst[j]     = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
-			dst[j + 1] = (src[i+4] * coeff_r + src[i+5] * coeff_g + src[i+6] * coeff_b + 8192) >> 14;
-			dst[j + 2] = (src[i+8] * coeff_r + src[i+9] * coeff_g + src[i+10] * coeff_b + 8192) >> 14;
-			dst[j + 3] = (src[i+12] * coeff_r + src[i+13] * coeff_g + src[i+14] * coeff_b + 8192) >> 14;
-		}
-		for (; i < srcLength; i += 4, ++j) {
-			dst[j] = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
-		}
-		image = dst;
-	}
-	if(image instanceof ArrayBuffer) image = new Uint8Array(image);
-	OCRAD.write_file('/in.pnm', image);
-	var desc = OCRAD.open();
-	OCRAD.set_image_from_file(desc, 'in.pnm', 0);
-	OCRAD.set_utf8_format(desc, 1);
-	OCRAD.recognize(desc, 0)
-	var text = '';
-	var block_count = OCRAD.result_blocks(desc);
-	
-	for(var i = 0; i < block_count; i++){
-		var line_count = OCRAD.result_lines(desc, i);
-		for(var j = 0; j < line_count; j++){
-			var line = OCRAD.result_line(desc, i, j);
-			text += line;
-		}
-	}
-	OCRAD.close(desc)
-	return text;
+var OCRAD = function(image, invert, raw){
+  if(image.getContext) image = image.getContext('2d');
+  if(image.getImageData) image = image.getImageData(0, 0, image.canvas.width, image.canvas.height);
+  if(image.data){
+    var width = image.width, height = image.height;
+    var header = "P5\n" + width + " " + height + "\n255\n";
+    var dst = new Uint8Array(header.length + width * height);
+    var src = image.data;
+    var srcLength = src.length | 0, srcLength_16 = (srcLength - 16) | 0;
+    var j = header.length;
+    for(var i = 0; i < j; i++){
+      dst[i] = header.charCodeAt(i) // write the header
+    }
+    var coeff_r = 4899, coeff_g = 9617, coeff_b = 1868;
+
+    for (var i = 0; i <= srcLength_16; i += 16, j += 4) {
+      dst[j]     = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
+      dst[j + 1] = (src[i+4] * coeff_r + src[i+5] * coeff_g + src[i+6] * coeff_b + 8192) >> 14;
+      dst[j + 2] = (src[i+8] * coeff_r + src[i+9] * coeff_g + src[i+10] * coeff_b + 8192) >> 14;
+      dst[j + 3] = (src[i+12] * coeff_r + src[i+13] * coeff_g + src[i+14] * coeff_b + 8192) >> 14;
+    }
+    for (; i < srcLength; i += 4, ++j) {
+      dst[j] = (src[i] * coeff_r + src[i+1] * coeff_g + src[i+2] * coeff_b + 8192) >> 14;
+    }
+    image = dst;
+  }
+  if(image instanceof ArrayBuffer) image = new Uint8Array(image);
+
+  OCRAD.write_file('/in.pnm', image);
+
+  var desc = OCRAD.open();
+  OCRAD.set_image_from_file(desc, 'in.pnm', invert ? 1 : 0);
+  if(raw){
+    OCRAD.set_exportfile(desc, '-');
+    Module.print = raw;
+  }
+  OCRAD.set_utf8_format(desc, 1);
+  OCRAD.recognize(desc, 0)
+
+  var text = '';
+  var block_count = OCRAD.result_blocks(desc);
+  
+  for(var i = 0; i < block_count; i++){
+    var line_count = OCRAD.result_lines(desc, i);
+    for(var j = 0; j < line_count; j++){
+      var line = OCRAD.result_line(desc, i, j);
+      text += line;
+    }
+  }
+  OCRAD.close(desc)
+
+  return text;
 }
 OCRAD.write_file = function(filename, arr){
-	FS.writeFile(filename, arr, {encoding: 'binary'});
+  FS.writeFile(filename, arr, {encoding: 'binary'});
 }
 OCRAD.version = Module.cwrap('OCRAD_version', 'string');
 OCRAD.open = Module.cwrap('OCRAD_open', 'number');
@@ -8067,3 +8076,8 @@ OCRAD.result_line = Module.cwrap('OCRAD_result_line', 'string', ['number', 'numb
 OCRAD.result_first_character = Module.cwrap('OCRAD_result_first_character', 'number', ['number']);
 return OCRAD;
 })();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = OCRAD;
+}
+

@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+	<head>
+	</head>
+	<body>
+		<script src="../ocrad.js"></script>
+		<style>
+			.highlight {
+				position: absolute;
+				background: yellow;
+				opacity: 0.5;
+				width: 10px;
+				height: 10px;
+			}
+		</style>
+		<script>
+
+			function OCRImage(image){
+				var canvas = document.createElement('canvas')
+				canvas.width  = image.naturalWidth;
+				canvas.height = image.naturalHeight;
+				canvas.getContext('2d').drawImage(image, 0, 0)
+				var raw = []
+				var text = OCRAD(canvas, 
+							false, // don't invert the colors (i.e. set this to true if you have white on black text)
+							function(line){ // this is for giving the Ocrad raw format which includes letter bounding boxes
+								raw.push(line); // its a function that gets called for each line of stdout
+							});
+
+				var letters = parseOcrad(raw);
+				console.log(letters) // here's a list of recognized letters and their corresponding coordinates and confidences
+
+				var wheel_of_fortune = /[rstlne]/i;
+				var image_offset = image.getBoundingClientRect();
+
+				letters.filter(function(letter){
+					// select the letters which have vanna white's approval
+					return letter.matches.some(function(match){
+						return wheel_of_fortune.test(match.letter)
+					})
+				}).forEach(function(letter){
+					// draw a little yellow box over their faces
+					var highlight = document.createElement('div')
+					highlight.className = 'highlight'
+					highlight.style.top = (letter.y + image_offset.top) + 'px'
+					highlight.style.left = (letter.x + image_offset.left) + 'px'
+					highlight.style.width = letter.width + 'px'
+					highlight.style.height = letter.height + 'px'
+					document.body.appendChild(highlight)
+				})
+			}
+
+
+			function parseOcrad(raw){
+				var raw = raw.map(function(e){
+					return e.match(/^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s*;\s*(\d+)(\,?.+)?$/)
+				}).filter(function(e){
+					return e
+				}).map(function(e){
+					var x = parseInt(e[1]),
+						y = parseInt(e[2]),
+						w = parseInt(e[3]),
+						h = parseInt(e[4]),
+						g = parseInt(e[5]);
+				
+					var matches = [];
+					if(g > 0){
+						var etc = e[6].trim();
+						while(etc[0] == ',' && etc[1] == ' '){
+							etc = etc.slice(2)
+							var m = etc.match(/^\'(.+?)\'(\d+)/)
+							matches.push({
+								letter: m[1], 
+								confidence: parseInt(m[2])
+							})
+							etc = etc.slice(m[0].length)
+						}
+					}
+					if(matches.length != g) console.error('recognition count mismatch', g, matches);
+					return {
+						x: x,
+						y: y,
+						width: w,
+						height: h,
+						matches: matches
+					}
+				});
+				
+				return raw;
+			}
+		</script>
+		<img src="message.png" onload="OCRImage(this)">
+	</body>	
+</html>
+
+
