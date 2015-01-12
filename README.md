@@ -5,7 +5,7 @@ OCR in Javascript via Emscripten
 
 
 
-As with any minor stepping stone on the <strikeout>road to hell</strikeout> relentless trajectory of <link>Atwood's Law, I probably don't need to justify the existence of yet another "x, but now in Javascript!", but I might as well try. After all, we all would like to think that there's some ulterior motive to fulfilling that prophesy. 
+As with any minor stepping stone on the <strikeout>road to hell</strikeout> relentless trajectory of <link>Atwood's Law, I probably don't need to justify the existence of yet another "x, but now in Javascript!", but I might as well try. After all, we all would like to think that there's some ulterior motive to fulfilling that prophecy. 
 
 On tablet or other touchscreen devices- of which there are quite a number of nowadays (as the New Year's Eve post, I am obliged to include conjecture about the technological zeitgeist), a library such as Ocrad.js might be used to add handwriting input in a device and operating system agnostic manner. Oftentimes, capturing the strokes and sending them over to a server to process might entail unacceptably high latency. Maybe you're working on an offline-capable note-taking app, or a browser extension which indexes all the doge memes that you stumble upon while prawling the dark corners of the internet.
 
