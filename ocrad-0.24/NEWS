@@ -1,0 +1,16 @@
+Changes in version 0.24:
+
+Character recognition has been improved.
+(merged 'LZ', 'TZ' and 'rt', '9' vs 'g', 'A' vs 'R', 'C' vs '(', 'G',
+'J', 'L', 's', 'x', 'z').
+
+Several filters can be now applied in sequence using more than one
+"--filter" option.
+
+The new filters "same_height", "upper_num" and "upper_num_only", have
+been added.
+
+The description of "OCRAD_result_blocks" in the manual has been fixed.
+
+The license has been changed to GPL version 2 or later for better GPL
+compatibility. GPLv2 and GPLv2+ programs may use the library now.
