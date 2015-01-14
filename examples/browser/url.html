@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Numeric Ocrad.js Example</title>
+		<style>
+			body {
+				background: whiteSmoke;
+				font-family: sans-serif;
+				margin: 30px;
+			}
+			
+			#transcription {
+				font-size: 30px;
+				padding: 30px;
+				min-width: 300px;
+				color: gray;
+			}
+			#transcription.done {
+				color: black;
+			}
+			#main {
+				display: flex;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Ocrad.js Example: Loading from URL</h1>
+
+		<script src="../../ocrad.js"></script>
+		<script>
+			function recognize_image(){
+				document.getElementById('transcription').innerText = "(Recognizing...)"
+
+				OCRAD(document.getElementById("pic"), {
+					numeric: true
+				}, function(text){
+					document.getElementById('transcription').className = "done"
+					document.getElementById('transcription').innerText = text;
+				})
+			}
+			onload = function(){
+				var img = new Image();
+				img.src = 'img/hask.jpg'
+				img.onload = function(){
+					OCRAD(img, function(text){
+						document.getElementById('transcription').innerText = text;
+						document.body.appendChild(img)
+					})
+				}
+			}
+		</script>
+		<div id="transcription"></div>
+	</body>	
+</html>
+
+
