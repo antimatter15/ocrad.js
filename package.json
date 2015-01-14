@@ -1,6 +1,6 @@
 {
   "name": "ocrad.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "OCR in JavaScript",
   "keywords": ["ocr"],
   "homepage": "https://github.com/antimatter15/ocrad.js",
