@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+	</head>
+	<body>
+		<script src="../../ocrad.js"></script>
+		<style>
+			.highlight {
+				position: absolute;
+				background: yellow;
+				opacity: 0.5;
+				width: 10px;
+				height: 10px;
+			}
+		</style>
+		<script>
+
+			function OCRImage(image){
+				var raw = []
+				var letters = OCRAD(image, { verbose: true }).letters;
+				// here's a list of recognized letters and their corresponding coordinates and confidences
+
+				var wheel_of_fortune = /[rstlne]/i;
+				var image_offset = image.getBoundingClientRect();
+
+				letters.filter(function(letter){
+					// select the letters which have vanna white's approval
+					return letter.matches.some(function(match){
+						return wheel_of_fortune.test(match.letter)
+					})
+				}).forEach(function(letter){
+					// draw a little yellow box over their faces
+					var highlight = document.createElement('div')
+					highlight.className = 'highlight'
+					highlight.style.top = (letter.y + image_offset.top) + 'px'
+					highlight.style.left = (letter.x + image_offset.left) + 'px'
+					highlight.style.width = letter.width + 'px'
+					highlight.style.height = letter.height + 'px'
+					document.body.appendChild(highlight)
+				})
+			}
+		</script>
+		<img src="img/message.png" onload="OCRImage(this)">
+	</body>	
+</html>
+
