@@ -1,7 +1,7 @@
 ocrad.js
 ========
 
-OCR in Javascript via Emscripten
+OCR in Javascript via Emscripten by [Kevin Kwok](http://antimatter15.com)
 
 
 
