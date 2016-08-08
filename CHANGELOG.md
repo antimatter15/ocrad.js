@@ -1,3 +1,7 @@
+August 8, 2016
+
+	* Major update to Ocrad.js, based on Ocrad 0.25
+
 January 13, 2015
 
 	* Major update to Ocrad.js, based on Ocrad 0.24
@@ -11,7 +15,7 @@ January 13, 2015
 	* Lazy initialization — it doesn't initialize emscripten until run for the first time
 
 May 6, 2014
-	
+
 	* NodeJS module
 
 January 1, 2014
