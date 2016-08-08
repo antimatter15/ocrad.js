@@ -1,0 +1,26 @@
+Changes in version 0.25:
+
+The new option "-E, --user-filter", which allows the use of user-defined
+filters, has been added.
+
+Character recognition has been improved. ('2' vs 'Z', '4' vs 'Q',
+'5' vs 'S', 'E', 'J', merged 'VV').
+
+Uppercase 'Y' with acute and 'Y' with diaeresis are now recognized.
+
+Uppercase 'S' and 'Z' with caron are no more misrecognized as lowercase.
+
+The new built-in filters "text_block" and "upper_num_mark" have been
+added.
+
+The output of "--help" has been extended.
+
+The new chapters "Introduction" and "Filters" have been added to the
+manual.
+
+The testsuite now checks the recognition of 11 more characters.
+
+The targets "install-compress", "install-strip-compress",
+"install-info-compress" and "install-man-compress" have been added to
+the Makefile. (Installing compressed docs may become the default in the
+future).
