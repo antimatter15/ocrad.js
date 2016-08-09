@@ -1,0 +1,17 @@
+# Ocrad User-defined Filter file (.ouf)
+[0123456789]
+[A-Za-z], 'Ñ', 'ñ'
+U00C0 - U00C5		# A
+U00C8-U00CB		# E
+U00CC-U00CF		# I
+U00D2-U00D6		# O
+U00D9-U00DC		# U
+'\xE3',U00E5		# a tilde, a ring
+U0160, U0161		# s caron
+U00DD,U00FD		# y acute
+U0178,'\377'		# y diaeresis
+U017D , U017E		# z caron
+[áéíóúàèìòùäëïöüâêîôû]
+[-!"#$%&'()*+,./:;<=>?]
+[]@[\\^_`{|}~¡ª¬°±º¿çÇ÷]
+'=' = '='		# this line is just to test the parser
