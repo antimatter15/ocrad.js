@@ -1,0 +1,21 @@
+--- configure	2014-10-02 12:42:41.000000000 -0400
++++ configure	2015-01-12 22:38:43.000000000 -0500
+@@ -23,7 +23,7 @@
+ infodir='$(datarootdir)/info'
+ libdir='${exec_prefix}/lib'
+ mandir='$(datarootdir)/man'
+-CXX=g++
++# CXX=g++
+ CPPFLAGS=
+ CXXFLAGS='-Wall -W -O2'
+ LDFLAGS=
+--- ocradlib.cc	2014-09-11 16:25:24.000000000 -0400
++++ ocradlib.cc	2015-01-13 06:00:02.000000000 -0500
+@@ -216,6 +248,7 @@
+     { ocrdes->ocr_errno = OCRAD_mem_error; return -1; }
+   if( ocrdes->textpage ) delete ocrdes->textpage;
+   ocrdes->textpage = textpage;
++  if( ocrdes->control.exportfile ) textpage->xprint( ocrdes->control );
+   return 0;
+   }
+ 

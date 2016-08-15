@@ -1,0 +1,72 @@
+--- ocradlib.cc	2014-09-11 16:25:24.000000000 -0400
++++ ocradlib.cc	2015-01-13 06:00:02.000000000 -0500
+@@ -173,6 +173,38 @@
+   return retval;
+   }
+ 
++int OCRAD_transform( OCRAD_Descriptor * const ocrdes, const char * const transformation )
++  {
++  if( !verify_descriptor( ocrdes ) ) return -1;
++  Transformation trans;
++  if( !trans.set( transformation ) ) { return -1; }
++  ocrdes->page_image->transform( trans );
++  return 0;
++  }
++
++int OCRAD_set_exportfile( OCRAD_Descriptor * const ocrdes, const char * const filename)
++  {
++  if( !verify_descriptor( ocrdes ) ) return -1;
++  
++  FILE * exportfile = 0;
++  if( filename && filename[0] )
++    {
++    if( std::strcmp( filename, "-" ) == 0 ) exportfile = stdout;
++    else exportfile = std::fopen( filename, "w" );
++    }
++  if( !exportfile ) { ocrdes->ocr_errno = OCRAD_bad_argument; return -1; }
++
++  ocrdes->control.exportfile = exportfile;
++  return 0;
++  }
++
++int OCRAD_add_filter( OCRAD_Descriptor * const ocrdes, const char * const name)
++  {
++  if( !verify_descriptor( ocrdes ) ) return -1;
++  ocrdes->control.add_filter("", name);
++  return 0;
++  }
++
+ 
+ int OCRAD_recognize( OCRAD_Descriptor * const ocrdes, const bool layout )
+   {
+@@ -184,6 +216,7 @@
+     { ocrdes->ocr_errno = OCRAD_mem_error; return -1; }
+   if( ocrdes->textpage ) delete ocrdes->textpage;
+   ocrdes->textpage = textpage;
++  if( ocrdes->control.exportfile ) textpage->xprint( ocrdes->control );
+   return 0;
+   }
+ 
+--- ocradlib.h	2014-10-02 12:42:41.000000000 -0400
++++ ocradlib.h	2015-01-12 23:59:26.000000000 -0500
+@@ -68,11 +68,20 @@
+ int OCRAD_set_utf8_format( struct OCRAD_Descriptor * const ocrdes,
+                            const bool utf8 );		// 0 = byte, 1 = utf8
+ 
++int OCRAD_set_exportfile( struct OCRAD_Descriptor * const ocrdes,
++                               const char * const filename);
++
++int OCRAD_add_filter( struct OCRAD_Descriptor * const ocrdes,
++                               const char * const name);
++
+ int OCRAD_set_threshold( struct OCRAD_Descriptor * const ocrdes,
+                          const int threshold );		// 0..255, -1 = auto
+ 
+ int OCRAD_scale( struct OCRAD_Descriptor * const ocrdes, const int value );
+ 
++int OCRAD_transform( OCRAD_Descriptor * const ocrdes, 
++                        const char * const transformation );
++
+ int OCRAD_recognize( struct OCRAD_Descriptor * const ocrdes,
+                      const bool layout );
+ 

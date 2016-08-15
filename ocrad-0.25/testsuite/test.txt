@@ -1,0 +1,12 @@
+00123456789
+ABCDEFGHIJKLMN
+ÑOPQRSTUVWXYZ
+abcdefghijklmn
+ñopqrstuvwxyz
+
+ÁÉÍÓÚ ÀÈÌÒÙ ÄËÏÖÜ
+ÂÊÎÔÛ Å¦Ý¾´ å¨ýÿ¸
+áéíóú àèìòù äëïöü âêîôû
+!"#$%&'()*+,-./:;<=>?
+@[\]^_`{|}~¡ª¬°±º¿çÇ÷
+
