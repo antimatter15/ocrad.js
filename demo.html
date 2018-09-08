@@ -224,10 +224,17 @@
 
 			// here's a really simple little drawing app so people can try their luck at
 			// the lottery that is offline handwriting recognition
+			var isTouchSupported = 'ontouchstart' in window;
+			var isPointerSupported = window.PointerEvent;
+			var isMSPointerSupported = window.MSPointerEvent;
+
+			var downEvent = isTouchSupported ? 'touchstart' : (isPointerSupported ? 'pointerdown' : (isMSPointerSupported ? 'MSPointerDown' : 'mousedown'));
+			var moveEvent = isTouchSupported ? 'touchmove' : (isPointerSupported ? 'pointermove' : (isMSPointerSupported ? 'MSPointerMove' : 'mousemove'));
+			var upEvent = isTouchSupported ? 'touchend' : (isPointerSupported ? 'pointerup' : (isMSPointerSupported ? 'MSPointerUp' : 'mouseup'));
+
 			var drag = false, lastX, lastY;
-			c.onmousedown = function(e){ drag = true; lastX = 0; lastY = 0; e.preventDefault(); c.onmousemove(e) }
-			c.onmouseup   = function(e){ drag = false; e.preventDefault(); runOCR() }
-			c.onmousemove = function(e){
+
+			var draw = function(e){
 				e.preventDefault()
 				var rect = c.getBoundingClientRect();
 				var r = 5;
@@ -239,8 +246,8 @@
 					o.fill()
 				}
 				if(drag){
-					var x = e.clientX - rect.left, 
-						y = e.clientY - rect.top;
+					var x = isTouchSupported ? (e.targetTouches[0].pageX - c.offsetLeft) : (e.offsetX || e.layerX - c.offsetLeft);
+					var y = isTouchSupported ? (e.targetTouches[0].pageY - c.offsetTop) : (e.offsetY || e.layerY - c.offsetTop);
 					
 					if(lastX && lastY){
 						var dx = x - lastX, dy = y - lastY;
@@ -254,7 +261,13 @@
 					lastX = x;
 					lastY = y;
 				}
-			}
+			};
+			var startDraw = function(e){ drag = true; lastX = 0; lastY = 0; e.preventDefault(); draw(e) };
+			var endDraw = function(e){ drag = false; e.preventDefault(); runOCR() };
+
+			c.addEventListener(downEvent, startDraw, false);
+			c.addEventListener(moveEvent, draw, false);
+			c.addEventListener(upEvent, endDraw, false);
 
 
 			document.body.ondragover = function(){ document.body.className = 'dragging'; return false }
