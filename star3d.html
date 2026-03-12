@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D 6-Pointed Star</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a1a;
+      color: #e0e0f0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin: 20px 0 8px;
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+      color: #aac4ff;
+    }
+
+    #canvas-container {
+      position: relative;
+      width: 520px;
+      height: 520px;
+      margin: 10px 0;
+    }
+
+    canvas {
+      display: block;
+      cursor: grab;
+      border-radius: 12px;
+      background: radial-gradient(ellipse at center, #1a1a3a 0%, #050510 100%);
+      box-shadow: 0 0 40px rgba(100, 140, 255, 0.15);
+    }
+
+    canvas:active { cursor: grabbing; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      margin-bottom: 20px;
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 100px;
+    }
+
+    label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8899cc;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 120px;
+      height: 4px;
+      border-radius: 2px;
+      background: #2a3060;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #6688ff;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(100,136,255,0.7);
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      width: 40px;
+      height: 28px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+    }
+
+    .value-display {
+      font-size: 0.68rem;
+      color: #6688ff;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    button {
+      padding: 7px 18px;
+      border: 1px solid #4466cc;
+      border-radius: 8px;
+      background: rgba(68, 102, 204, 0.15);
+      color: #aac4ff;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+
+    button:hover {
+      background: rgba(68, 102, 204, 0.35);
+      box-shadow: 0 0 8px rgba(100,140,255,0.3);
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: #445588;
+      margin-top: -4px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>3D Six-Pointed Star</h1>
+<p class="hint">Drag to rotate &nbsp;·&nbsp; Scroll to zoom</p>
+
+<div id="canvas-container">
+  <canvas id="c" width="520" height="520"></canvas>
+</div>
+
+<div class="controls">
+  <div class="control-group">
+    <label>Outer Radius</label>
+    <input type="range" id="outerR" min="60" max="160" value="120">
+    <span class="value-display" id="outerRVal">120</span>
+  </div>
+  <div class="control-group">
+    <label>Inner Radius</label>
+    <input type="range" id="innerR" min="20" max="100" value="60">
+    <span class="value-display" id="innerRVal">60</span>
+  </div>
+  <div class="control-group">
+    <label>Depth</label>
+    <input type="range" id="depth" min="5" max="80" value="30">
+    <span class="value-display" id="depthVal">30</span>
+  </div>
+  <div class="control-group">
+    <label>Auto-rotate</label>
+    <input type="range" id="speed" min="0" max="30" value="8">
+    <span class="value-display" id="speedVal">8</span>
+  </div>
+  <div class="control-group">
+    <label>Face Color</label>
+    <input type="color" id="faceColor" value="#4466ff">
+  </div>
+  <div class="control-group">
+    <label>Edge Color</label>
+    <input type="color" id="edgeColor" value="#aaccff">
+  </div>
+</div>
+
+<div class="btn-row">
+  <button id="btnReset">Reset View</button>
+  <button id="btnWire">Toggle Wireframe</button>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const CX = W / 2, CY = H / 2;
+
+  // --- state ---
+  let rotX = 0.45, rotY = 0.3;
+  let zoom = 1;
+  let autoSpeed = 8;
+  let wireframe = false;
+  let faceColor = '#4466ff';
+  let edgeColor = '#aaccff';
+  let outerR = 120, innerR = 60, depthZ = 30;
+
+  // --- mouse / touch drag ---
+  let dragging = false, lastX = 0, lastY = 0;
+
+  canvas.addEventListener('mousedown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    rotY += (e.clientX - lastX) * 0.008;
+    rotX += (e.clientY - lastY) * 0.008;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom *= e.deltaY > 0 ? 0.93 : 1.075;
+    zoom = Math.max(0.3, Math.min(3, zoom));
+  }, { passive: false });
+
+  // touch
+  let lastTouchDist = null;
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      dragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+    }
+  });
+  canvas.addEventListener('touchend', () => { dragging = false; lastTouchDist = null; });
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && dragging) {
+      rotY += (e.touches[0].clientX - lastX) * 0.01;
+      rotX += (e.touches[0].clientY - lastY) * 0.01;
+      lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+    } else if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      if (lastTouchDist) zoom = Math.max(0.3, Math.min(3, zoom * dist / lastTouchDist));
+      lastTouchDist = dist;
+    }
+  }, { passive: false });
+
+  // --- controls ---
+  function bindRange(id, valId, setter) {
+    const el = document.getElementById(id);
+    const disp = document.getElementById(valId);
+    el.addEventListener('input', () => { setter(+el.value); disp.textContent = el.value; });
+  }
+  bindRange('outerR', 'outerRVal', v => outerR = v);
+  bindRange('innerR', 'innerRVal', v => innerR = v);
+  bindRange('depth',  'depthVal',  v => depthZ = v);
+  bindRange('speed',  'speedVal',  v => autoSpeed = v);
+  document.getElementById('faceColor').addEventListener('input', e => faceColor = e.target.value);
+  document.getElementById('edgeColor').addEventListener('input', e => edgeColor = e.target.value);
+  document.getElementById('btnReset').addEventListener('click', () => { rotX = 0.45; rotY = 0.3; zoom = 1; });
+  document.getElementById('btnWire').addEventListener('click', () => { wireframe = !wireframe; });
+
+  // --- 3D math ---
+  function rotateX(p, a) {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [p[0], c*p[1] - s*p[2], s*p[1] + c*p[2]];
+  }
+  function rotateY(p, a) {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [c*p[0] + s*p[2], p[1], -s*p[0] + c*p[2]];
+  }
+
+  const FOV = 600;
+  function project(p) {
+    const z = p[2] + FOV;
+    const scale = FOV / z * zoom;
+    return [CX + p[0] * scale, CY + p[1] * scale, p[2]];
+  }
+
+  // Build 6-pointed star (Star of David) as 12 outer pts + 12 inner pts
+  // A 6-pointed star has 12 vertices on its outline (alternating tips and inner notches)
+  function starPoints(R, r, n = 6) {
+    const pts = [];
+    for (let i = 0; i < n * 2; i++) {
+      const angle = (Math.PI / n) * i - Math.PI / 2;
+      const radius = i % 2 === 0 ? R : r;
+      pts.push([radius * Math.cos(angle), radius * Math.sin(angle)]);
+    }
+    return pts;
+  }
+
+  function buildStar(R, r, d) {
+    const flat = starPoints(R, r, 6); // 12 2D points
+    const front = flat.map(p => [p[0], p[1],  d / 2]);
+    const back  = flat.map(p => [p[0], p[1], -d / 2]);
+    const n = flat.length;
+
+    const faces = [];
+    // front fan
+    const cf = [0, 0,  d / 2];
+    for (let i = 0; i < n; i++) faces.push({ verts: [cf, front[i], front[(i+1)%n]], side: 'front' });
+    // back fan (reversed for outward normal)
+    const cb = [0, 0, -d / 2];
+    for (let i = 0; i < n; i++) faces.push({ verts: [cb, back[(i+1)%n], back[i]], side: 'back' });
+    // side quads
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      faces.push({ verts: [front[i], back[i], back[j], front[j]], side: 'side' });
+    }
+    return faces;
+  }
+
+  // simple face normal for back-face culling
+  function faceNormal(verts) {
+    const a = verts[0], b = verts[1], c = verts[2];
+    const ab = [b[0]-a[0], b[1]-a[1], b[2]-a[2]];
+    const ac = [c[0]-a[0], c[1]-a[1], c[2]-a[2]];
+    return [
+      ab[1]*ac[2] - ab[2]*ac[1],
+      ab[2]*ac[0] - ab[0]*ac[2],
+      ab[0]*ac[1] - ab[1]*ac[0]
+    ];
+  }
+
+  function dot(a, b) { return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
+  function len(v) { return Math.sqrt(dot(v, v)) || 1; }
+  function norm(v) { const l = len(v); return [v[0]/l, v[1]/l, v[2]/l]; }
+
+  // light direction (camera space)
+  const LIGHT = norm([0.5, -0.8, 1]);
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return [r, g, b];
+  }
+
+  function shadedColor(baseRgb, normalVec, ambient = 0.25) {
+    const n = norm(normalVec);
+    const d = Math.max(0, dot(n, LIGHT));
+    const bright = ambient + (1 - ambient) * d;
+    const [r, g, b] = baseRgb.map(c => Math.min(255, Math.round(c * bright)));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  // --- render loop ---
+  let last = 0;
+  function frame(ts) {
+    const dt = Math.min((ts - last) / 1000, 0.05);
+    last = ts;
+
+    if (autoSpeed > 0) rotY += autoSpeed * 0.0005 * 60 * dt;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const faces = buildStar(outerR, innerR, depthZ);
+    const faceRgb = hexToRgb(faceColor);
+    const edgeRgb = hexToRgb(edgeColor);
+
+    // transform + project each face
+    const rendered = faces.map(f => {
+      const tv = f.verts.map(v => {
+        let p = rotateX(v, rotX);
+        p = rotateY(p, rotY);
+        return p;
+      });
+      const projected = tv.map(p => project(p));
+      const n = faceNormal(tv);
+      return { projected, normal: n, side: f.side, tv };
+    });
+
+    // painter's sort (average z)
+    rendered.sort((a, b) => {
+      const za = a.tv.reduce((s, v) => s + v[2], 0) / a.tv.length;
+      const zb = b.tv.reduce((s, v) => s + v[2], 0) / b.tv.length;
+      return za - zb;
+    });
+
+    rendered.forEach(f => {
+      const n = f.normal;
+      // back-face cull: normal z > 0 means facing camera
+      if (!wireframe && n[2] < 0) return;
+
+      const pts = f.projected;
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.closePath();
+
+      if (!wireframe) {
+        // choose base color per side type
+        let base = faceRgb;
+        if (f.side === 'side') {
+          // slightly darker for sides
+          base = faceRgb.map(c => Math.round(c * 0.7));
+        }
+        ctx.fillStyle = shadedColor(base, n);
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = wireframe
+        ? `rgb(${edgeRgb[0]},${edgeRgb[1]},${edgeRgb[2]})`
+        : `rgba(${edgeRgb[0]},${edgeRgb[1]},${edgeRgb[2]},0.45)`;
+      ctx.lineWidth = wireframe ? 1.2 : 0.7;
+      ctx.stroke();
+    });
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
